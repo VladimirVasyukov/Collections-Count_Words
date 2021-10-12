@@ -20,29 +20,26 @@ public class Words {
     private static final int MIN_WORD_COUNT = 10;
 
     public String countWords(List<String> lines) {
-        StringBuilder text = new StringBuilder();
-        StringBuilder result = new StringBuilder();
-
-        for (String line : lines) {
-            text.append(line).append(" ");
-        }
-
         Map<String, WordCounter> map = new HashMap<>();
-        String[] strings = text.toString().replaceAll(REGEX_DELIMITER, EMPTY_SYM).split(TEXT_FILE_DELIMITER);
+        String[] strings = lines.toString().replaceAll(REGEX_DELIMITER, EMPTY_SYM).split(TEXT_FILE_DELIMITER);
         for (String word : strings) {
-            if (word.length() < MIN_WORD_LENGTH) {
-                continue;
-            }
             String lowerCaseWord = word.toLowerCase();
-            map.put(lowerCaseWord, map.containsKey(lowerCaseWord)
-                ? map.get(lowerCaseWord).addCount() : new WordCounter(lowerCaseWord));
+            if (map.containsKey(lowerCaseWord)) {
+                map.get(lowerCaseWord).incrementCount();
+            } else {
+                map.put(lowerCaseWord, new WordCounter(lowerCaseWord));
+            }
         }
-
         List<WordCounter> list = new ArrayList<>(map.values());
         Collections.sort(list);
 
+        return applyFilters(list);
+    }
+
+    public String applyFilters(List<WordCounter> list) {
+        StringBuilder result = new StringBuilder();
         for (WordCounter word : list) {
-            if (word.getCount() >= MIN_WORD_COUNT) {
+            if (word.getCount() >= MIN_WORD_COUNT && word.getValue().length() >= MIN_WORD_LENGTH) {
                 result.append(word).append("\n");
             }
         }

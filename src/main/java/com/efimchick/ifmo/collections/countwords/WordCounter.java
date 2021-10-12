@@ -18,9 +18,8 @@ public class WordCounter implements Comparable<WordCounter> {
         return count;
     }
 
-    public WordCounter addCount() {
+    public final void incrementCount() {
         count++;
-        return this;
     }
 
     @Override
