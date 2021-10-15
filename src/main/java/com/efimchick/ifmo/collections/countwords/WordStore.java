@@ -1,11 +1,11 @@
 package com.efimchick.ifmo.collections.countwords;
 
-public class WordCounter implements Comparable<WordCounter> {
+public class WordStore implements Comparable<WordStore> {
 
     private final String value;
     private Integer count;
 
-    public WordCounter(String value) {
+    public WordStore(String value) {
         this.value = value;
         this.count = 1;
     }
@@ -23,7 +23,7 @@ public class WordCounter implements Comparable<WordCounter> {
     }
 
     @Override
-    public int compareTo(WordCounter o) {
+    public int compareTo(WordStore o) {
         int compareCount = -(count.compareTo(o.getCount()));
         return compareCount == 0 ? value.compareTo(o.getValue()) : compareCount;
     }

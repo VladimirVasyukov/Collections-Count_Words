@@ -20,25 +20,25 @@ public class Words {
     private static final int MIN_WORD_COUNT = 10;
 
     public String countWords(List<String> lines) {
-        Map<String, WordCounter> map = new HashMap<>();
+        Map<String, WordStore> map = new HashMap<>();
         String[] strings = lines.toString().replaceAll(REGEX_DELIMITER, EMPTY_SYM).split(TEXT_FILE_DELIMITER);
         for (String word : strings) {
             String lowerCaseWord = word.toLowerCase();
             if (map.containsKey(lowerCaseWord)) {
                 map.get(lowerCaseWord).incrementCount();
             } else {
-                map.put(lowerCaseWord, new WordCounter(lowerCaseWord));
+                map.put(lowerCaseWord, new WordStore(lowerCaseWord));
             }
         }
-        List<WordCounter> list = new ArrayList<>(map.values());
+        List<WordStore> list = new ArrayList<>(map.values());
         Collections.sort(list);
 
         return applyFilters(list);
     }
 
-    public String applyFilters(List<WordCounter> list) {
+    public String applyFilters(List<WordStore> list) {
         StringBuilder result = new StringBuilder();
-        for (WordCounter word : list) {
+        for (WordStore word : list) {
             if (word.getCount() >= MIN_WORD_COUNT && word.getValue().length() >= MIN_WORD_LENGTH) {
                 result.append(word).append("\n");
             }
