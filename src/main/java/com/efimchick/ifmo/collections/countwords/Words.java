@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 07.2_Generics and Collections - Vladimir Vasyukov
@@ -12,18 +15,16 @@ import java.util.Map;
  */
 
 public class Words {
-    private static final String TEXT_FILE_DELIMITER = "\\s";
-    private static final String REGEX_DELIMITER =
-        "([\\u0000-\\u0040\\u005B-\\u0060\\u007B-\\u00BF\\u02B0-\\u036F\\u00D7\\u00F7\\u2000-\\u2BFF])+";
-    private static final String EMPTY_SYM = " ";
+    private static final String REGEX_PATTERN = "(\\p{L}{4,})";
+    private static final Pattern PATTERN = Pattern.compile(REGEX_PATTERN);
     private static final int MIN_WORD_LENGTH = 4;
     private static final int MIN_WORD_COUNT = 10;
 
     public String countWords(List<String> lines) {
         Map<String, WordStore> map = new HashMap<>();
-        String[] strings = lines.toString().replaceAll(REGEX_DELIMITER, EMPTY_SYM).split(TEXT_FILE_DELIMITER);
-        for (String word : strings) {
-            String lowerCaseWord = word.toLowerCase();
+        List<String> wordsList = getWordsFromText(lines);
+        for (String word : wordsList) {
+            String lowerCaseWord = word.toLowerCase(Locale.ENGLISH);
             if (map.containsKey(lowerCaseWord)) {
                 map.get(lowerCaseWord).incrementCount();
             } else {
@@ -36,7 +37,17 @@ public class Words {
         return applyFilters(list);
     }
 
-    public String applyFilters(List<WordStore> list) {
+    private List<String> getWordsFromText(List<String> lines) {
+        List<String> wordsList = new ArrayList<>();
+        Matcher matcher = PATTERN.matcher(lines.toString());
+        while (matcher.find()) {
+            String word = matcher.group(0);
+            wordsList.add(word);
+        }
+        return wordsList;
+    }
+
+    public String applyFilters(Iterable<WordStore> list) {
         StringBuilder result = new StringBuilder();
         for (WordStore word : list) {
             if (word.getCount() >= MIN_WORD_COUNT && word.getValue().length() >= MIN_WORD_LENGTH) {
